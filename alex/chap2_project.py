@@ -34,8 +34,22 @@ data     = pd.read_csv( filepath )
 # Histogram
 data.hist( bins = 50 )
 
-# 2D plot
-data.plot(kind='scatter',x='longitude',y='latitude')
+# Correlation coef.
+data.corr()
+
+# Max correlation plot
+data.plot(kind='scatter',x='median_income',y='median_house_value', alpha = 0.2)
+
+# 2D scatter plot
+#data.plot(kind='scatter',x='longitude',y='latitude', alpha = 0.2)
+
+data.plot(kind='scatter',x='longitude',y='latitude', alpha = 0.2,
+          s=data['population']/100, label = 'population',
+          c=data['median_house_value'], cmap=plt.cm.jet_r,
+          colorbar=True)
+
+# Subfig of all scatter plot
+pd.tools.plotting.scatter_matrix( data )
 
 ######################################
 # Split data
@@ -48,5 +62,20 @@ train_set.hist( bins = 50 )
 # Check size
 #train_set.values.size
 #data.values.size
+
+######################################
+#  New attributes
+###################################
+
+X = train_set.drop('median_house_value', axis=1)
+y = train_set['median_house_value'].copy()
+
+# Get rid of N/A
+X.dropna(subset=['total_bedrooms'])
+
+#  New attributes
+X['rph'] = X['total_rooms']    / X['households']
+X['bpr'] = X['total_bedrooms'] / X['total_rooms']
+X['pph'] = X['population']     / X['households']
 
 
